@@ -15,8 +15,8 @@
     windows_bitdepth: '{{ (system_info.data.OSArchitecture == "64-bit") | ternary("64","32") }}'
 
 # See library/win_admin.ps1
-- name: confirm that user is member of Administrators group
-  win_admin:
+#- name: confirm that user is member of Administrators group
+#  win_admin:
 
 # install Visual C++ Redistributable package if a version is defined
 - include: install_vcredist.yml
