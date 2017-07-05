@@ -1,0 +1,7 @@
+---
+# file: roles/framework/reactjs/meta/main.yml
+
+dependencies:
+  - role: framework/nodejs
+
+# vim:ft=ansible:

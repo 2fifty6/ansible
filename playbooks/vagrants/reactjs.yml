@@ -1,0 +1,8 @@
+---
+# file: playbooks/vagrants/reactjs.yml
+
+- hosts: vagrants:&linux
+  roles:
+    - framework/reactjs
+
+# vim:ft=ansible:
