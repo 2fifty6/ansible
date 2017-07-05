@@ -12,7 +12,7 @@
       name={{ item }}
       state=present
       update_cache=yes
-  sudo: yes
+  become: yes
   with_items:
     - mongodb
     - mongodb-server
@@ -23,7 +23,7 @@
       name=mongodb
       enabled=yes
       state=started
-  sudo: yes
+  become: yes
   tags:
       - service
 

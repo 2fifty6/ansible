@@ -8,7 +8,7 @@
       owner=root
       group=root
       mode=0644
-  sudo: yes
+  become: yes
 
 - name: yum_install | check if MongoDB packages are installed
   action: command yum list installed "mongodb-org*"
@@ -21,7 +21,7 @@
       pkg={{ item }}-{{ mongodb_version }}
       state=present
       update_cache=yes
-  sudo: yes
+  become: yes
   when: 'yum_list_mongodb.stdout.find("{{ item }}") == -1 or yum_list_mongodb.stdout.find("{{ mongodb_version }}") == -1'
   with_items:
       - mongodb-org
@@ -35,7 +35,7 @@
       name=mongod
       enabled=yes
       state=started
-  sudo: yes
+  become: yes
   tags:
       - service
 

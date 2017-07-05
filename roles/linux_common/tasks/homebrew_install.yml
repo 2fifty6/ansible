@@ -9,7 +9,7 @@
 # install the rest of the packages
 - name: homebrew_install | install all packages dependencies
   homebrew: name={{ item }} state=latest
-  sudo: no
+  become: no
   with_flattened:
     - homebrew_packages
     - packages

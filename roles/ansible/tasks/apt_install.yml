@@ -5,14 +5,14 @@
 # only update apt cache if it's 24 hours old or more
 - name: apt_install | update apt cache
   apt: update_cache=yes cache_valid_time=86400
-  sudo: yes
+  become: yes
   failed_when: False
 
 - name: apt_install | install software-properties-common
   apt:
     pkg="software-properties-common"
     state=latest
-  sudo: yes
+  become: yes
 
 - name: apt_install | install ansible ppa
   apt_repository:
@@ -26,18 +26,18 @@
     state=latest
     update_cache=yes
     force=yes
-  sudo: yes
+  become: yes
 
 - name: apt_install | install sshpass
   apt:
     pkg=sshpass
     state=latest
-  sudo: yes
+  become: yes
 
 - name: apt_install | install sshfs
   apt:
     pkg=sshfs
     state=latest
-  sudo: yes
+  become: yes
 
 # vim:ft=ansible:

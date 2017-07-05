@@ -6,7 +6,7 @@
 
 - name: apt_install | check for legacy Launchpad PPA Repositories
   shell: ls "/etc/apt/sources.list.d/chris-lea-node_js-*"
-  sudo: yes
+  become: yes
   register: nodejs_legacy_repos
   changed_when: false
   failed_when: false
@@ -15,7 +15,7 @@
   file:
     path={{ item }}
     state=absent
-  sudo: yes
+  become: yes
   failed_when: false
   with_flattened:
     - nodejs_legacy_repos
@@ -24,7 +24,7 @@
   apt_repository:
     repo="ppa:chris-lea/node.js"
     state=absent
-  sudo: yes
+  become: yes
 
 - name: apt_install | determine distro for nodejs repo list file template
   shell: lsb_release -c -s
@@ -39,13 +39,13 @@
   apt_key:
     url="https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
     state=present
-  sudo: yes
+  become: yes
 
 - name: apt_install | install repository file
   template:
     src=nodesource.list.j2
     dest=/etc/apt/sources.list.d/nodesource.list
-  sudo: yes
+  become: yes
 
 # install nodejs
 - name: apt_install | install nodejs
@@ -53,7 +53,7 @@
     name={{ item }}
     state=present
     update_cache=yes
-  sudo: yes
+  become: yes
   with_items:
     - nodejs
 #    - npm

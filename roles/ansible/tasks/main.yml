@@ -29,7 +29,7 @@
   file:
     path=/usr/share/{{ item }}
     state=directory
-  sudo: yes
+  become: yes
   with_items:
     - "ansible"
     - "ansible_plugins"
@@ -48,7 +48,7 @@
   file:
     path={{ repodir_remote }}/{{ item }}
     mode="a+x"
-  sudo: yes
+  become: yes
   with_items: script_files.stdout_lines
 
 - name: generate README

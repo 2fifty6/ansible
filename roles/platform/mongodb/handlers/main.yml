@@ -5,6 +5,6 @@
   service:
     name=mongod
     state=restarted
-  sudo: yes
+  become: yes
 
 # vim:ft=ansible:

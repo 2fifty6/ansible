@@ -12,7 +12,7 @@
   yum:
     pkg=ansible
     state=latest
-  sudo: yes
+  become: yes
   when: yum_list_ansible.stdout.find('ansible') == -1
 
 - name: yum_install | check if sshpass is installed
@@ -25,7 +25,7 @@
   yum:
     pkg=sshpass
     state=latest
-  sudo: yes
+  become: yes
   when: yum_list_sshpass.stdout.find('sshpass') == -1
 
 - name: yum_install | check if sshfs is installed
@@ -38,7 +38,7 @@
   yum:
     pkg=sshfs
     state=latest
-  sudo: yes
+  become: yes
   when: yum_list_sshfs.stdout.find('sshfs') == -1
 
 # vim:ft=ansible:

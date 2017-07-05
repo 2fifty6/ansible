@@ -11,6 +11,6 @@
 #   production=[yes|no]: install deps in production mode, excluding devDeps
 #   registry: the registry to install modules from
 #   version: the version to be installed
-  sudo: yes
+  become: yes
 
 # vim:ft=ansible:

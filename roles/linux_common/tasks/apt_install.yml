@@ -4,19 +4,19 @@
 # install ppas
 - name: apt_install | install ppas
   apt_repository: 'repo="{{ item }}" state=present update_cache=yes'
-  sudo: yes
+  become: yes
   with_items: apt_repos
 
 # only update apt cache if it's 24 hours old or more
 - name: apt_install | update apt cache
   apt: update_cache=yes cache_valid_time=86400
-  sudo: yes
+  become: yes
   failed_when: False
 
 # install packages
 - name: apt_install | install packages
   apt: pkg={{ item }} state=latest
-  sudo: yes
+  become: yes
   with_flattened:
     - apt_packages
     - packages

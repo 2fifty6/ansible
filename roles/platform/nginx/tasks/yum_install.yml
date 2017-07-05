@@ -14,14 +14,14 @@
       owner=root
       group=root
       mode=0644
-  sudo: yes
+  become: yes
 
 - name: yum_install | install NGINX package
   yum:
       pkg=nginx-{{ nginx_version }}
       state=present
       update_cache=yes
-  sudo: yes
+  become: yes
   when: 'yum_list_nginx.stdout.find("nginx-{{ nginx_version }}") == -1'
 
 - name: yum_install | ensure service is running/active and enabled on boot
@@ -29,7 +29,7 @@
       name=nginx
       enabled=yes
       state=started
-  sudo: yes
+  become: yes
   tags:
       - service
 

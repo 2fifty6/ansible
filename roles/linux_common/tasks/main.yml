@@ -15,7 +15,7 @@
 # Install python package dependencies
 - name: install python packages
   pip: name={{ item }}
-  sudo: yes
+  become: yes
   with_items: python_packages
 
 # vim:ft=ansible:
