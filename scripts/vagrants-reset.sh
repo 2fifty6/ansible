@@ -7,8 +7,8 @@ control_c()
 }
 trap control_c SIGINT
 
-TEMP=`getopt -o l:m:p:r:fs --long match:,playbook:,limit:,restore:,full,snapshot,no-provision,no-destroy -n "$0" -- "$@"`
-eval set -- "$TEMP"
+#TEMP=`getopt -o l:m:p:r:fs --long match:,playbook:,limit:,restore:,full,snapshot,no-provision,no-destroy -n "$0" -- "$@"`
+#eval set -- "$TEMP"
 
 # TODO
 usage () {
@@ -26,28 +26,32 @@ MATCH=""
 LIMIT=""
 RESTORE=""
 
-while true ; do
-  case "$1" in
-    -f|--full) FULL=1 ; shift ;;
-    -l|--limit) LIMIT=$2 ; shift 2 ;;
-    -m|--match) MATCH=$2 ; shift 2 ;;
-    -p|--playbook) PLAYBOOK=$2 ; shift 2 ;;
-    -r|--restore) RESTORE=$2 ; NO_DESTROY=1 ; shift 2 ;;
-    --no-provision) NO_PROVION=1 ; shift ;;
-    --no-destroy) NO_DESTROY=1 ; shift ;;
-    --) shift ; break ;;
-  esac
-done
+#while true ; do
+#  case "$1" in
+#    -f|--full) FULL=1 ; shift ;;
+#    -l|--limit) LIMIT=$2 ; shift 2 ;;
+#    -m|--match) MATCH=$2 ; shift 2 ;;
+#    -p|--playbook) PLAYBOOK=$2 ; shift 2 ;;
+#    -r|--restore) RESTORE=$2 ; NO_DESTROY=1 ; shift 2 ;;
+#    --no-provision) NO_PROVION=1 ; shift ;;
+#    --no-destroy) NO_DESTROY=1 ; shift ;;
+#    --) shift ; break ;;
+#  esac
+#done
+MATCH=$1
+PLAYBOOK=$2
 
 # NOTE: for this script to work, Vagrantfiles must be placed in the "vagrants" directory
 # one level up from the current script's directory
 
 # RESET / RESTORE
 REPO_DIR_LOCAL=$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )
-for VAGRANT_DIR in `find $REPO_DIR_LOCAL/vagrants -type f -name Vagrantfile | sort -r | xargs dirname`; do
-  if [[ "$VAGRANT_DIR" =~ "$MATCH" ]]; then
-    echo -e "\e[1;4mWorking on vagrant\e[m: \e[92m`basename $VAGRANT_DIR`\e[m"
-    cd $VAGRANT_DIR
+VAGRANT_DIRS=`find $REPO_DIR_LOCAL/vagrants -type f -name Vagrantfile | tr '\n' ' '`
+for VAGRANT_DIR in $VAGRANT_DIRS; do
+  VAGRANT=`dirname $VAGRANT_DIR`
+  if [[ "$VAGRANT" =~ "$MATCH" ]]; then
+    echo -e "\e[1;4mWorking on vagrant\e[m: \e[92m`basename $VAGRANT`\e[m"
+    cd $VAGRANT
     VM_NAME=$(grep --color=no -r vb.name Vagrantfile | sed 's/.*"\([^"]*\)".*/\1/')
     if [[ ! -z "`VBoxManage list vms | grep \"$VM_NAME\"`" ]]; then
       vagrant halt
@@ -71,12 +75,12 @@ done
 
 # PROVISION
 LIMIT=""
-if [[ $NO_PROVION -ne 1 ]]; then
-  if [[ ! -z $MATCH ]]; then
-    LIMIT="--limit localhost,$MATCH"
-  fi
-  ansible-playbook $REPO_DIR_LOCAL/playbooks/vagrants/provision.yml $LIMIT
-fi
+#if [[ $NO_PROVION -ne 1 ]]; then
+#  if [[ ! -z $MATCH ]]; then
+#    LIMIT="--limit localhost,$MATCH"
+#  fi
+#  ansible-playbook $REPO_DIR_LOCAL/playbooks/vagrants/provision.yml $LIMIT
+#fi
 
 if [[ $FULL -eq 1 ]]; then
   # classically, the site.yml is a playbook to be used to test all of your roles
@@ -84,3 +88,4 @@ if [[ $FULL -eq 1 ]]; then
 elif [[ ! -z $PLAYBOOK && -e $REPO_DIR_LOCAL/playbooks/vagrants/${PLAYBOOK}.yml ]]; then
   ansible-playbook $REPO_DIR_LOCAL/playbooks/vagrants/${PLAYBOOK}.yml $LIMIT
 fi
+ansible-playbook $REPO_DIR_LOCAL/playbooks/vagrants/${PLAYBOOK}.yml $LIMIT
