@@ -1,0 +1,27 @@
+---
+# file: roles/ansible/meta/main.yml
+
+dependencies:
+  - role: linux_common
+    packages:
+      - python-pip
+      - openssl
+      #- libssl-dev
+      - krb5-config # kerberos
+      - libkrb5-dev # kerberos
+    yum_packages:
+      - epel-release
+      - redis # for fact-caching
+    apt_packages:
+      - software-properties-common
+      - redis-server # for fact-caching
+    apt_repos:
+      - 'deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main'
+    python_packages:
+      - httplib2
+      - urlparse2
+      - 'http://github.com/diyan/pywinrm/archive/master.zip#egg=pywinrm'
+      - pykerberos # kerberos
+      - redis
+
+# vim:ft=ansible:

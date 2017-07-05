@@ -1,0 +1,43 @@
+---
+# file: roles/ansible/tasks/apt_install.yml
+# this playbook installs apt packages on an ansible host
+
+# only update apt cache if it's 24 hours old or more
+- name: apt_install | update apt cache
+  apt: update_cache=yes cache_valid_time=86400
+  sudo: yes
+  failed_when: False
+
+- name: apt_install | install software-properties-common
+  apt:
+    pkg="software-properties-common"
+    state=latest
+  sudo: yes
+
+- name: apt_install | install ansible ppa
+  apt_repository:
+    repo='deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main'
+    state=present
+    update_cache=yes
+
+- name: apt_install | install ansible
+  apt:
+    pkg=ansible
+    state=latest
+    update_cache=yes
+    force=yes
+  sudo: yes
+
+- name: apt_install | install sshpass
+  apt:
+    pkg=sshpass
+    state=latest
+  sudo: yes
+
+- name: apt_install | install sshfs
+  apt:
+    pkg=sshfs
+    state=latest
+  sudo: yes
+
+# vim:ft=ansible:

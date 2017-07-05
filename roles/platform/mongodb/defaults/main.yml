@@ -1,0 +1,7 @@
+---
+# file: roles/mongodb/defaults/main.yml
+# These are mongodb-specific variables that we EXPECT to override
+
+mongodb_version: 2.6.10-1
+
+# vim:ft=ansible:

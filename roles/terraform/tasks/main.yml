@@ -1,0 +1,37 @@
+---
+# tasks file for terraform
+
+- name: get available terraform installers from url
+  uri: url={{ terraform_url }} return_content=yes
+  register: terraform_url_results
+
+- name: parse html results from terraform url
+  set_fact:
+    terraform_html: '{{ terraform_url_results.content | xml_to_json }}'
+
+- name: extract content terraform html body
+  set_fact:
+    terraform_html_contents: '{{ terraform_html.html.body.pre }}'
+
+- name: split content into a list of version hrefs
+  set_fact:
+    terraform_versions: "{{ terraform_html_contents | map(attribute='a.href') | list }}"
+
+- name: filter list by version, os, and architecture
+  set_fact:
+    terraform_package="{{ item | regex_replace(":","") }}"
+  when: '{{ item | match(".*" + terraform_version + "_" + terraform_os + "_" + terraform_arch + ".*") }}'
+  with_items: terraform_versions
+
+- name: download terraform installer
+  get_url:
+    url="{{ terraform_url }}/{{ terraform_package }}"
+    dest="{{ terraform_download_dir }}/{{terraform_package}}"
+
+- name: extract terraform installer
+  unarchive:
+    src="{{ terraform_download_dir }}/{{ terraform_package }}"
+    dest="{{ terraform_install_dir }}"
+    copy=no
+
+# vim:ft=ansible:

@@ -1,0 +1,8 @@
+---
+# file group_vars/ansibles
+
+# for use with scripts/ansiblize.sh script
+# Ubuntu-style by default
+repodir_local: "~/Projects/ansible"
+repodir_remote: "/home/{{ ansible_ssh_user }}/Projects/ansible"
+

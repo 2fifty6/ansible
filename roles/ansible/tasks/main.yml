@@ -1,0 +1,60 @@
+---
+# file: roles/ansible/tasks/main.yml
+# this installs ansible with our current repo/branch state
+
+# Install Ansible and Dependencies
+- include: yum_install.yml
+  when: ansible_pkg_mgr == 'yum'
+
+- include: apt_install.yml
+  when: ansible_pkg_mgr == 'apt'
+
+# Ansible artifacts
+- name: get current project contents
+  local_action: raw ls {{ repodir_local }} -A | grep -v .git
+  run_once: true
+  register: repodir_contents
+
+- name: ensure project directory exists
+  file:
+    path={{ repodir_remote }}
+    state=directory
+
+- name: get script directory contents
+  local_action: raw cd {{ repodir_remote }} && find scripts -type f
+  register: script_files
+  run_once: yes
+
+- name: ensure extra ansible dirs exist
+  file:
+    path=/usr/share/{{ item }}
+    state=directory
+  sudo: yes
+  with_items:
+    - "ansible"
+    - "ansible_plugins"
+
+# TODO lineinfile: /etc/redis/redis.conf needs requirepass directive commented out
+# copy items
+- name: copy project contents to remote project directory
+  copy:
+    src={{ repodir_local }}/{{ item }}
+    dest={{ repodir_remote }}
+    force=yes
+  with_items: repodir_contents.stdout_lines
+
+# configure items
+- name: ensure all scripts are executable
+  file:
+    path={{ repodir_remote }}/{{ item }}
+    mode="a+x"
+  sudo: yes
+  with_items: script_files.stdout_lines
+
+- name: generate README
+  template:
+    src=README.txt.j2
+    dest={{ repodir_remote }}/README.txt
+    backup=yes
+
+# vim:ft=ansible:

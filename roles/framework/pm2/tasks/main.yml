@@ -1,0 +1,30 @@
+---
+# file: roles/pm2/tasks/main.yml
+
+- name: npm install pm2
+  npm: >
+    name=pm2
+    global=yes
+    state=present
+    path={{ node_modules_path }}
+#   ignore_scripts=[yes|no]: Use the --ignore-scripts flag when installing
+#   production=[yes|no]: install deps in production mode, excluding devDeps
+#   registry: the registry to install modules from
+#   version: the version to be installed
+  sudo: yes
+  register: npm_install_pm2
+
+- name: pm2 self-update
+  shell: pm2 updatePM2
+  sudo: yes
+  when: npm_install_pm2|changed
+
+- name: ensure pm2 is daemonized
+  action: command pm2 startup {{ ansible_distribution.lower() }}
+  sudo: yes
+  register: pm2_daemonized
+  changed_when: "'[PM2] PM2 Successfully daemonized' in pm2_daemonized.stdout_lines"
+  tags:
+    - service
+
+# vim:ft=ansible:

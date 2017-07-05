@@ -1,0 +1,7 @@
+---
+# file: roles/nginx/defaults/main.yml
+# These are nginx-specific variables that we EXPECT to override
+
+nginx_version: 1.8.0
+
+# vim:ft=ansible:

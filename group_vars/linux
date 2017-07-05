@@ -1,0 +1,5 @@
+---
+# file: group_vars/linux
+
+ansible_connection: ssh
+ansible_ssh_port: 22

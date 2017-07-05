@@ -1,0 +1,10 @@
+---
+# file: roles/mongodb/handlers/main.yml
+
+- name: restart mongod
+  service:
+    name=mongod
+    state=restarted
+  sudo: yes
+
+# vim:ft=ansible:

@@ -1,0 +1,30 @@
+---
+# file: roles/mongodb/tasks/apt_install.yml
+
+- name: apt_install | check if MongoDB packages are installed
+  action: command dpkg -l "mongodb-org*"
+  register: dpkg_list_mongodb
+  failed_when: False
+  changed_when: False
+
+- name: apt_install | install MongoDB packages
+  apt:
+      name={{ item }}
+      state=present
+      update_cache=yes
+  sudo: yes
+  with_items:
+    - mongodb
+    - mongodb-server
+  when: dpkg_list_mongodb.rc != 0
+
+- name: apt_install | ensure service is running/active and enabled on boot
+  service:
+      name=mongodb
+      enabled=yes
+      state=started
+  sudo: yes
+  tags:
+      - service
+
+# vim:ft=ansible:

@@ -1,0 +1,16 @@
+---
+# file: roles/framework/angularjs/tasks/main.yml
+
+- name: npm install angularjs
+  npm: >
+    name=angularjs
+    global=yes
+    state=present
+    path={{ node_modules_path }}
+#   ignore_scripts=[yes|no]: Use the --ignore-scripts flag when installing
+#   production=[yes|no]: install deps in production mode, excluding devDeps
+#   registry: the registry to install modules from
+#   version: the version to be installed
+  sudo: yes
+
+# vim:ft=ansible:

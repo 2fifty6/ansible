@@ -1,0 +1,14 @@
+---
+# file: playbooks/pm2.yml
+
+- hosts: dev
+
+  roles:
+
+    - role: linux_common
+      packages:
+        - 'nodejs-{{ nodejs_version }}'
+
+    - role: platform/pm2
+
+# vim:ft=ansible:

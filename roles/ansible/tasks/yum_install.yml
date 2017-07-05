@@ -1,0 +1,44 @@
+---
+# file: roles/ansible/tasks/yum_install.yml
+# this playbook installs yum packages on an ansible host
+
+- name: yum_install | check if ansible is installed
+  action: command yum list installed ansible
+  register: yum_list_ansible
+  failed_when: False
+  changed_when: False
+
+- name: yum_install | install ansible
+  yum:
+    pkg=ansible
+    state=latest
+  sudo: yes
+  when: yum_list_ansible.stdout.find('ansible') == -1
+
+- name: yum_install | check if sshpass is installed
+  action: command yum list installed sshpass
+  register: yum_list_sshpass
+  failed_when: False
+  changed_when: False
+
+- name: yum_install | install sshpass
+  yum:
+    pkg=sshpass
+    state=latest
+  sudo: yes
+  when: yum_list_sshpass.stdout.find('sshpass') == -1
+
+- name: yum_install | check if sshfs is installed
+  action: command yum list installed sshfs
+  register: yum_list_sshfs
+  failed_when: False
+  changed_when: False
+
+- name: yum_install | install sshfs
+  yum:
+    pkg=sshfs
+    state=latest
+  sudo: yes
+  when: yum_list_sshfs.stdout.find('sshfs') == -1
+
+# vim:ft=ansible:

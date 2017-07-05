@@ -1,0 +1,21 @@
+---
+# file: roles/linux_common/tasks/main.yml
+# this will install common/prerequisite packages, etc
+
+# Install package dependencies
+- include: yum_install.yml
+  when: ansible_pkg_mgr == 'yum'
+
+- include: apt_install.yml
+  when: ansible_pkg_mgr == 'apt'
+
+- include: homebrew_install.yml
+  when: ansible_os_family == 'Darwin'
+
+# Install python package dependencies
+- name: install python packages
+  pip: name={{ item }}
+  sudo: yes
+  with_items: python_packages
+
+# vim:ft=ansible:

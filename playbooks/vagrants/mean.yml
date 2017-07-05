@@ -1,0 +1,8 @@
+---
+# file: playbooks/vagrants/mean.yml
+
+- hosts: vagrants:&linux
+  roles:
+    - role: framework/mean
+
+# vim:ft=ansible:

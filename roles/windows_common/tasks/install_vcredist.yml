@@ -1,0 +1,27 @@
+---
+# file: roles/windows_common/tasks/install_vcredist.yml
+
+# assume no reboot needed unless proven otherwise
+- name: install_vcredist | establish some facts about Visual C++ Redistributable
+  set_fact:
+    vcredist_url: '{{ vcredist_urls[ vcredist_version ] }}'
+    vcredist_file: 'vcredist_x{{ (windows_bitdepth == "64") | ternary("x64","x86") }}.exe'
+    vcredist_args: '/passive /norestart'
+
+- name: install_vcredist | download Visual C++ Redistributable
+  win_get_url:
+    url={{ vcredist_url }}/{{ vcredist_file }}
+    dest='C:\{{ vcredist_file }}'
+
+- name: install_vcredist | install Visual C++ Redistributable
+  raw: 'C:\{{ vcredist_file }} {{ vcredist_args }}'
+  register: vcredist_install_result
+  failed_when: 'vcredist_install_result.rc not in [0,3010]'
+
+# Exit code 3010 generally means "success, but reboot required"
+# https://msdn.microsoft.com/en-us/library/Aa376931(v=VS.85).aspx
+
+- include: reboot_host.yml
+  when: 'vcredist_install_result.rc == 3010'
+
+# vim:ft=ansible:

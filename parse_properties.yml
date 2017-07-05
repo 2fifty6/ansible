@@ -1,0 +1,25 @@
+---
+
+# find variables like VAR_NAME="some value"
+- name: parse_properties | scan file for variable declarations
+  shell: grep -r '^\([A-Z0-9_]*\)[ ]*=[ ]*\(.*\)$' {{ variable_file }}
+  register: grep_bashstyle_vars
+  changed_when: false
+
+# var_name: "some value"
+- name: parse_properties | register the bash-style variables we found
+  set_fact: "{{ item.split('=',1)[0].strip().lower() }}={{ item.split('=',1)[1].strip() }}"
+  with_items: grep_bashstyle_vars.stdout_lines
+
+# find variables like com.some.thing="something"
+- name: parse_properties | scan file for java-style variable declarations
+  shell: grep -r '^\([A-Za-z0-9\.]*\)[ ]*=[ ]*\(.*\)$' {{ variable_file }}
+  register: grep_javastyle_vars
+  changed_when: false
+
+# com_some_thing: "something"
+- name: parse_properties | register the java-style variables we found
+  set_fact: "{{ item.split('=',1)[0].replace('.','_').strip() }}={{ item.split('=',1)[1].strip() }}"
+  with_items: grep_javastyle_vars.stdout_lines
+
+# vim:ft=ansible

@@ -1,0 +1,10 @@
+---
+# file: roles/framework/nodejs/tasks/main.yml
+
+- include: yum_install.yml
+  when: ansible_pkg_mgr == 'yum'
+
+- include: apt_install.yml
+  when: ansible_pkg_mgr == 'apt'
+
+# vim:ft=ansible:

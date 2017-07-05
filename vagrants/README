@@ -1,0 +1,3 @@
+By heirarchically structuring our vagrant files in nested directories, in addition to
+matching the same structural organization in our inventory, we can test
+against multiple different sets of platforms with scripts/vagrants-reset.sh

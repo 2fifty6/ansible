@@ -1,0 +1,17 @@
+---
+# file roles/linux_common/tasks/homebrew_install.yml
+
+# TODO Install homebrew if not already installed
+
+- name: homebrew_install | update homebrew
+  homebrew: update_homebrew=yes upgrade_all=yes
+
+# install the rest of the packages
+- name: homebrew_install | install all packages dependencies
+  homebrew: name={{ item }} state=latest
+  sudo: no
+  with_flattened:
+    - homebrew_packages
+    - packages
+
+# vim:ft=ansible:

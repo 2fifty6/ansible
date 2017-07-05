@@ -1,0 +1,22 @@
+---
+# file: playbooks/vagrants/ansible.yml
+- hosts: localhost
+  tasks:
+
+    - name: resolve artifact host info from localhost
+      set_fact:
+        artifacts_host: 10.10.10.1
+        artifacts_user: "{{ ansible_user_id }}"
+
+- hosts: vagrants:&linux
+
+  pre_tasks:
+    - name: inform current hosts of artifacts host info
+      set_fact:
+        artifacts_host: "{{ hostvars['localhost'].artifacts_host }}"
+        artifacts_user: "{{ hostvars['localhost'].artifacts_user }}"
+
+  roles:
+    - ansible
+
+# vim:ft=ansible:

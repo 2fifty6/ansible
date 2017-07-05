@@ -1,0 +1,10 @@
+---
+# file: roles/framework/mean/meta/main.yml
+
+dependencies:
+  - platform/mongodb
+  - framework/expressjs
+  - framework/angularjs
+  - framework/nodejs
+
+# vim:ft=ansible:

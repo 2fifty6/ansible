@@ -1,0 +1,31 @@
+---
+# file: playbooks/vagrants.yml
+
+# STEP 1: Wait for all of our vagrants to be ready
+- hosts: vagrants
+  gather_facts: no
+  tasks:
+    - name: wait for our vagrants to open their ssh ports
+      local_action: wait_for
+        host={{ ansible_ssh_host }}
+        port={{ ansible_ssh_port }}
+        state=started
+        delay=5
+        connect_timeout=5
+        timeout=60
+
+# STEP 2: Provision / Configure our vagrants
+# Linux
+- hosts: 'vagrants:!windows'
+  roles:
+    - role: linux_common
+      packages:
+        - rsync
+        - unzip
+
+# Windows
+- hosts: 'vagrants:&windows'
+  roles:
+    - windows_common
+
+# vim:ft=ansible:

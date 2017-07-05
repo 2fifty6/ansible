@@ -1,0 +1,43 @@
+---
+# tasks file for packer
+
+- name: get available packer installers from url
+  uri: url={{ packer_url }} return_content=yes
+  register: packer_url_results
+
+- name: parse html results from packer url
+  set_fact:
+    packer_html: '{{ packer_url_results.content | xml_to_json }}'
+
+- name: extract content packer html body
+  set_fact:
+    packer_html_contents: '{{ packer_html.html.body.pre }}'
+
+- name: split content into a list of version hrefs
+  set_fact:
+    packer_versions: "{{ packer_html_contents | map(attribute='a.href') | list }}"
+
+- name: filter list by version, os, and architecture
+  set_fact:
+    packer_package="{{ item | regex_replace(":","") }}"
+  when: '{{ item | match(".*" + packer_version + "_" + packer_os + "_" + packer_arch + ".*") }}'
+  with_items: packer_versions
+
+- name: download packer installer
+  get_url:
+    url="{{ packer_url }}/{{ packer_package }}"
+    dest="{{ packer_download_dir }}/{{packer_package}}"
+
+- name: extract packer installer
+  unarchive:
+    src="{{ packer_download_dir }}/{{ packer_package }}"
+    dest="{{ packer_install_dir }}"
+    copy=no
+
+- name: install post-processor-json-updater
+  get_url:
+    url="https://github.com/cliffano/packer-post-processor-json-updater/releases/download/v1.0/packer-post-processor-json-updater_{{ packer_os }}_{{ packer_arch }}"
+    dest={{ packer_install_dir }}/packer-post-processor-json-updater
+    mode=0755
+
+# vim:ft=ansible:

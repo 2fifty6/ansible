@@ -1,0 +1,42 @@
+---
+# file: roles/mongodb/tasks/yum_install.yml
+
+- name: yum_install | install repository file
+  template:
+      src=mongodb-org.repo.j2
+      dest=/etc/yum.repos.d/mongodb-org-{{ mongodb_version }}.repo
+      owner=root
+      group=root
+      mode=0644
+  sudo: yes
+
+- name: yum_install | check if MongoDB packages are installed
+  action: command yum list installed "mongodb-org*"
+  register: yum_list_mongodb
+  failed_when: False
+  changed_when: False
+
+- name: yum_install | install MongoDB packages
+  yum:
+      pkg={{ item }}-{{ mongodb_version }}
+      state=present
+      update_cache=yes
+  sudo: yes
+  when: 'yum_list_mongodb.stdout.find("{{ item }}") == -1 or yum_list_mongodb.stdout.find("{{ mongodb_version }}") == -1'
+  with_items:
+      - mongodb-org
+      - mongodb-org-server
+      - mongodb-org-mongos
+      - mongodb-org-shell
+      - mongodb-org-tools
+
+- name: yum_install | ensure service is running/active and enabled on boot
+  service:
+      name=mongod
+      enabled=yes
+      state=started
+  sudo: yes
+  tags:
+      - service
+
+# vim:ft=ansible:

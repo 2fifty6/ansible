@@ -1,0 +1,41 @@
+---
+# file: roles/windows_common/tasks/install_windows_features.yml
+
+# get windows features to install
+- name: install_windows_features | get list of available windows features (not installed or removed)
+  raw: 'powershell -Command "Get-WindowsFeature | where InstallState -eq Available | format-list Name"'
+  register: features_available_results
+
+- name: install_windows_features | compile list of installed windows features
+  set_fact:
+    features_available: '{{ features_available_results.stdout_lines | strip_crlf | string_list_filter("Name : ") | string_list_replace("Name : ","") }}'
+
+- name: install_windows_features | compile list of windows features to install for this role
+  set_fact:
+    features_missing: '{{ windows_features | intersect(features_available) }}'
+
+- name: install_windows_features | "Installing the following new feature(s)..."
+  debug: var=features_missing
+  when: '{{ features_missing | length }} > 0'
+
+# install windows features
+- name: install_windows_features | install windows features
+  win_feature:
+    name={{ item }} state=present restart=no
+    include_sub_features=yes
+    include_management_tools=yes
+  with_items: features_missing
+  register: install_windows_features_results
+
+- name: install_windows_features | check if we need to restart
+  set_fact:
+    features_restart_needed: 'true in {{ install_windows_features_results.results | map(attribute="restart_needed") | unique | default([false]) }}'
+  when: install_windows_features_results.results is defined
+
+- include: reboot_host.yml
+  when: 'features_restart_needed is defined and "True" in features_restart_needed'
+
+- name: install_windows_features | see if we need to try to reinstall any features
+  set_fact:
+    windows_features_need_retry: '{{ features_missing | length }} == 0 or install_windows_features_results|failed'
+# vim:ft=ansible:

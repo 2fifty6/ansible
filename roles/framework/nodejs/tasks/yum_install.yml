@@ -1,0 +1,29 @@
+---
+# file: roles/framework/nodejs/tasks/yum_install.yml
+
+- name: yum_install | check if nodejs is installed
+  action: command yum list installed nodejs-{{ nodejs_version }}
+  register: yum_list_nodejs
+  failed_when: False
+  changed_when: False
+
+# install nodejs
+- name: yum_install | install nodejs
+  yum: >
+    pkg=https://rpm.nodesource.com/pub/el/{{ ansible_distribution_major_version }}/{{ ansible_architecture }}/nodejs-{{ nodejs_version }}-1nodesource.el{{ ansible_distribution_major_version }}.{{ ansible_architecture }}.rpm
+    state=present
+    update_cache=yes
+  sudo: yes
+  when: yum_list_nodejs.stdout.find('nodejs') == -1
+
+# verify correct version
+- name: yum_install | check which version is installed
+  action: command node -v
+  register: nodejs_version_installed
+  changed_when: False
+
+- name: yum_install | verify the right version is installed
+  assert:
+    that: nodejs_version_installed != "v{{ nodejs_version }}"
+
+# vim:ft=ansible:

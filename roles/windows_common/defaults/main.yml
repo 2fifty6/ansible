@@ -1,0 +1,8 @@
+---
+# file: roles/windows_common/defaults/main.yml
+# These are common variables that we EXPECT to override
+
+# these prevent errors when common is run without arguments
+windows_features: []
+
+# vim:ft=ansible:

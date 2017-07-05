@@ -1,0 +1,8 @@
+---
+# file: playbooks/local_role.yml
+
+- hosts: localhost
+  roles:
+    - '{{ role }}'
+
+# vim:ft=ansible

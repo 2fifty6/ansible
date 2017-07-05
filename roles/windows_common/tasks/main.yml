@@ -1,0 +1,51 @@
+---
+# file: roles/windows-common/tasks/main.yml
+
+- name: verify that the host has as much RAM as we require
+  assert:
+    that: '{{ ansible_totalmem/(1024**3) }} >= {{ ram_min_gb }}'
+  when: ram_min_gb is defined
+
+- name: retrieve system info
+  win_systeminfo:
+  register: system_info
+
+- name: parse system info
+  set_fact:
+    windows_bitdepth: '{{ (system_info.data.OSArchitecture == "64-bit") | ternary("64","32") }}'
+
+# See library/win_admin.ps1
+- name: confirm that user is member of Administrators group
+  win_admin:
+
+# install Visual C++ Redistributable package if a version is defined
+- include: install_vcredist.yml
+  when: vcredist_version is defined
+
+# install windows features
+- name: install windows features
+  win_feature:
+    name={{ item }} state=present restart=no
+    include_sub_features=yes
+    include_management_tools=yes
+  with_items: windows_features
+  register: install_windows_features_results
+#  ignore_errors: yes # (part of an unfortunate hack, see comment below)
+
+- name: check if we need to restart
+  set_fact:
+    features_restart_needed: 'true in {{ install_windows_features_results.results | map(attribute="restart_needed") | unique | default([false]) }}'
+  when: install_windows_features_results.results is defined
+
+- include: reboot_host.yml
+  when: 'features_restart_needed is defined and "True" in features_restart_needed'
+
+# This is an unfortunate hack that is necessary in some development environments :-/
+#- name: see if we need to try to reinstall any features
+#  set_fact:
+#    windows_features_need_retry: '{{ windows_features | length }} > 0 and install_windows_features_results|failed'
+## TODO check if we need to do this again
+#- include: install_windows_features.yml
+#  when: '{{ windows_features | length }} > 0 and {{ windows_features_need_retry | default(False) }}'
+
+# vim:ft=ansible:

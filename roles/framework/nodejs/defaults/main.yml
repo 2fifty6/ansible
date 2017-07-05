@@ -1,0 +1,8 @@
+---
+# file: roles/framework/nodejs/defaults/main.yml
+# These are framework/nodejs-specific variables that we EXPECT to override
+
+nodejs_version: 0.10.35
+node_modules_path: /usr/lib/node_modules
+
+# vim:ft=ansible:

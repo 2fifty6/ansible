@@ -1,0 +1,7 @@
+---
+# file: roles/ansible/defaults/main.yml
+
+repodir_local: ~/Projects/ansible
+repodir_remote: /home/{{ ansible_ssh_user }}/Projects/ansible
+
+# vim:ft=ansible:

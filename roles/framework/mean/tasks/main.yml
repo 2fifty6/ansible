@@ -1,0 +1,11 @@
+---
+# file: roles/framework/mean/tasks/main.yml
+# This role is simply a meta-role, i.e. it wraps:
+# * MongoDB
+# * ExpressJS
+# * AngularJS
+# * NodeJS
+#
+# Since there is no functionality beyond this, this file is a dummy
+
+# vim:ft=ansible:

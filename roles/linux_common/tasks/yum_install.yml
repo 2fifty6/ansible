@@ -1,0 +1,24 @@
+---
+# file roles/linux_common/tasks/yum_install.yml
+
+# make sure fastest mirror plugin is not present
+- name: yum_install | disable/remove yum fastestmirror
+  replace:
+    dest=/etc/yum/pluginconf.d/fastestmirror.conf
+    regexp="^enabled=1$"
+    replace="enabled=0"
+  sudo: yes
+
+- name: yum_install | install epel-release
+  yum: pkg=epel-release state=present update_cache=yes
+  sudo: yes
+
+# install the rest of the packages
+- name: yum_install | install all packages dependencies
+  yum: pkg={{ item }} state=latest
+  sudo: yes
+  with_flattened:
+    - yum_packages
+    - packages
+
+# vim:ft=ansible:

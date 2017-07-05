@@ -1,0 +1,13 @@
+---
+# file: roles/linux_common/defaults/main.yml
+# These are common variables that we EXPECT to override
+
+# these prevent errors when common is run without arguments
+packages: []
+yum_packages: []
+apt_packages: []
+apt_repos: []
+homebrew_packages: []
+python_packages: []
+
+# vim:ft=ansible:

@@ -1,0 +1,7 @@
+---
+# file: roles/framework/angularjs/meta/main.yml
+
+dependencies:
+  - framework/nodejs
+
+# vim:ft=ansible:

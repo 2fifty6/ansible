@@ -1,0 +1,7 @@
+---
+# file: roles/framework/nodejs/meta/main.yml
+
+dependencies:
+  - linux_common
+
+# vim:ft=ansible:

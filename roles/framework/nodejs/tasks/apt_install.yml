@@ -1,0 +1,73 @@
+---
+# file: roles/framework/nodejs/tasks/apt_install.yml
+
+# Many of these plays were translated directly from script at:
+# https://deb.nodesource.com/setup
+
+- name: apt_install | check for legacy Launchpad PPA Repositories
+  shell: ls "/etc/apt/sources.list.d/chris-lea-node_js-*"
+  sudo: yes
+  register: nodejs_legacy_repos
+  changed_when: false
+  failed_when: false
+
+- name: apt_install | ensure all legacy Launchpad PPA Repositories are absent
+  file:
+    path={{ item }}
+    state=absent
+  sudo: yes
+  failed_when: false
+  with_flattened:
+    - nodejs_legacy_repos
+
+- name: apt_install | remove any cached legacy Launchpad PPA Repositories
+  apt_repository:
+    repo="ppa:chris-lea/node.js"
+    state=absent
+  sudo: yes
+
+- name: apt_install | determine distro for nodejs repo list file template
+  shell: lsb_release -c -s
+  register: nodejs_distro
+  changed_when: false
+
+- name: apt_install | update findings
+  set_fact:
+    nodejs_distro: "{{ nodejs_distro.stdout }}"
+
+- name: apt_install | add nodesource gpg key
+  apt_key:
+    url="https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
+    state=present
+  sudo: yes
+
+- name: apt_install | install repository file
+  template:
+    src=nodesource.list.j2
+    dest=/etc/apt/sources.list.d/nodesource.list
+  sudo: yes
+
+# install nodejs
+- name: apt_install | install nodejs
+  apt: >
+    name={{ item }}
+    state=present
+    update_cache=yes
+  sudo: yes
+  with_items:
+    - nodejs
+#    - npm
+#    npm gets packaged with nodejs
+#    attempting to install npm causes an error
+
+# verify correct version
+#- name: apt_install | check which version is installed
+#  action: command node -v
+#  register: nodejs_version_installed
+#  changed_when: False
+
+#- name: apt_install | verify the right version is installed
+#  assert:
+#    that: nodejs_version_installed != "v{{ nodejs_version }}"
+
+# vim:ft=ansible:

@@ -1,0 +1,33 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vagrantfile API/syntax version. Don't touch unless you know what you're doing!
+WIN2012v2_IP = "10.10.10.50"
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.define "win2012v2" do |win2012v2|
+    win2012v2.vm.box = "win2012v2"
+    win2012v2.vm.box_url = "https://vagrantcloud.com/mwrock/boxes/Windows2012R2/versions/0.4.0/providers/virtualbox.box"
+
+    win2012v2.vm.boot_timeout = 600
+    win2012v2.vm.host_name = "win2012v2"
+    win2012v2.vm.communicator = "winrm"
+    win2012v2.vm.network :private_network, ip: WIN2012v2_IP
+
+    win2012v2.vm.provider :virtualbox do |vb|
+      vb.gui = false
+      vb.name = "win2012v2"
+      vb.customize ["modifyvm", :id, "--memory", "8192"]
+      vb.customize ["modifyvm", :id, "--vram", "64"]
+      vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
+      vb.customize ["modifyvm", :id, "--autostart-enabled", "off"]
+      vb.customize ["modifyvm", :id, "--cpuexecutioncap", "40"]
+      #vb.customize ["modifyvm", :id, "--vrde", "on"]
+      #vb.customize ["modifyvm", :id, "--vrdeport", "3389"]
+      #vb.customize ["modifyvm", :id, "--vrdeaddress", WIN2012v2_IP]
+    end
+
+  end
+
+end

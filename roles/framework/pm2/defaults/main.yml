@@ -1,0 +1,7 @@
+---
+# file: roles/pm2/defaults/main.yml
+# These are pm2-specific variables that we EXPECT to override
+
+node_modules_path: /usr/lib/node_modules
+
+# vim:ft=ansible:

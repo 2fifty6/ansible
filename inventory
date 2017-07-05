@@ -1,0 +1,95 @@
+# This is the default ansible 'hosts' file.
+#
+# It should live in /etc/ansible/hosts
+# or, on OS X (via homebrew), /usr/local/etc/ansible/hosts
+#
+# For AWS, however, a dynamic inventory is recommended as best practices:
+# http://docs.ansible.com/ansible/intro_dynamic_inventory.html#example-aws-ec2-external-inventory-script
+#
+# Not required, as an inventory can be passed in with [ -i alt_hosts ]
+# Also, 'alt_hosts' may an executable as long as it is +x and generates a valid ini structure
+#
+#   - Comments begin with the '#' character
+#   - Blank lines are ignored
+#   - Groups of hosts are delimited by [header] elements
+#   - You can enter hostnames or ip addresses
+#   - A hostname/ip can be a member of multiple groups
+
+###########
+## Hosts ##
+###########
+
+# vagrant hosts
+vagrant_centos ansible_ssh_host=10.10.10.20
+vagrant_ubuntu ansible_ssh_host=10.10.10.30
+
+
+##########
+## Apps ##
+##########
+
+#############
+# Linux Apps
+
+##############
+# Windows Apps
+
+
+##################
+## Environments ##
+##################
+
+[aws]
+# (none yet)
+
+[rsp]
+# (none yet)
+
+[vagrants]
+vagrant_ubuntu
+vagrant_centos
+
+[dev:children]
+vagrants
+
+#######################
+## Operating Systems ##
+#######################
+
+######################
+# ansible_distribution
+
+[redhat]
+# (none yet)
+
+[centos]
+vagrant_centos
+
+[ubuntu]
+vagrant_ubuntu
+
+[windows]
+# (none yet)
+
+###################
+# ansible_os_family
+
+[redhat:children]
+centos
+
+[debian:children]
+ubuntu
+
+#################
+# ansible_system
+
+[linux:children]
+# Linux Distributions
+redhat
+debian
+# Linux Apps
+# (none yet)
+
+[windows:children]
+# Windows Apps
+# (none yet)

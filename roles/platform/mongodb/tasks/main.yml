@@ -1,0 +1,11 @@
+---
+# file: roles/mongodb/tasks/main.yml
+# this playbook installs and configures a MongoDB server instance
+
+- include: yum_install.yml
+  when: ansible_pkg_mgr == 'yum'
+
+- include: apt_install.yml
+  when: ansible_pkg_mgr == 'apt'
+
+# vim:ft=ansible:
