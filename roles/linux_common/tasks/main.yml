@@ -15,7 +15,7 @@
 # Install python package dependencies
 - name: install python packages
   pip: name={{ item }}
-  become: yes
-  with_items: python_packages
+  become: '"{{ ansible_user_id }}" != "root"'
+  with_items: "{{ python_packages }}"
 
 # vim:ft=ansible:

@@ -14,14 +14,14 @@
       owner=root
       group=root
       mode=0644
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
 
 - name: yum_install | install NGINX package
   yum:
       pkg=nginx-{{ nginx_version }}
       state=present
       update_cache=yes
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
   when: 'yum_list_nginx.stdout.find("nginx-{{ nginx_version }}") == -1'
 
 - name: yum_install | ensure service is running/active and enabled on boot
@@ -29,7 +29,7 @@
       name=nginx
       enabled=yes
       state=started
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
   tags:
       - service
 

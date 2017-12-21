@@ -29,7 +29,7 @@
   file:
     path=/usr/share/{{ item }}
     state=directory
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
   with_items:
     - "ansible"
     - "ansible_plugins"
@@ -48,7 +48,7 @@
   file:
     path={{ repodir_remote }}/{{ item }}
     mode="a+x"
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
   with_items: script_files.stdout_lines
 
 - name: generate README

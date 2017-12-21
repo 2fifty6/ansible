@@ -4,21 +4,21 @@
 # install ppas
 - name: apt_install | install ppas
   apt_repository: 'repo="{{ item }}" state=present update_cache=yes'
-  become: yes
-  with_items: apt_repos
+  become: '"{{ ansible_user_id }}" != "root"'
+  with_items: "{{ apt_repos }}"
 
 # only update apt cache if it's 24 hours old or more
 - name: apt_install | update apt cache
   apt: update_cache=yes cache_valid_time=86400
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
   failed_when: False
 
 # install packages
 - name: apt_install | install packages
   apt: pkg={{ item }} state=latest
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
   with_flattened:
-    - apt_packages
-    - packages
+    - "{{ apt_packages }}"
+    - "{{ packages }}"
 
 # vim:ft=ansible:

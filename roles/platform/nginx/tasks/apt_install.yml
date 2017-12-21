@@ -7,14 +7,14 @@
       name=nginx
       state=present
       update_cache=yes
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
 
 - name: apt_install | ensure service is running/active and enabled on boot
   service:
       name=nginx
       enabled=yes
       state=started
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
   tags:
       - service
 

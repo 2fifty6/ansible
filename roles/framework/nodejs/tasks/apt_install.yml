@@ -6,7 +6,7 @@
 
 - name: apt_install | check for legacy Launchpad PPA Repositories
   shell: ls "/etc/apt/sources.list.d/chris-lea-node_js-*"
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
   register: nodejs_legacy_repos
   changed_when: false
   failed_when: false
@@ -15,7 +15,7 @@
   file:
     path={{ item }}
     state=absent
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
   failed_when: false
   with_flattened:
     - nodejs_legacy_repos
@@ -24,7 +24,7 @@
   apt_repository:
     repo="ppa:chris-lea/node.js"
     state=absent
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
 
 - name: apt_install | determine distro for nodejs repo list file template
   shell: lsb_release -c -s
@@ -39,24 +39,23 @@
   apt_key:
     url="https://deb.nodesource.com/gpgkey/nodesource.gpg.key"
     state=present
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
 
 - name: apt_install | install repository file
   template:
     src=nodesource.list.j2
     dest=/etc/apt/sources.list.d/nodesource.list
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
 
 # install nodejs
 - name: apt_install | install nodejs
   apt: >
     name={{ item }}
     state=present
-    update_cache=yes
-  become: yes
+  become: '"{{ ansible_user_id }}" != "root"'
   with_items:
     - nodejs
-#    - npm
+    - npm
 #    npm gets packaged with nodejs
 #    attempting to install npm causes an error
 
