@@ -1,0 +1,9 @@
+---
+# file: roles/kibana/defaults/main.yml
+
+kibana_port: 5601
+kibana_home: /opt/kibana4
+kibana_user: www-data
+kibana_pkg: 'https://download.elastic.co/kibana/kibana/kibana-4.1.2-linux-x64.tar.gz'
+
+# vim:ft=ansible

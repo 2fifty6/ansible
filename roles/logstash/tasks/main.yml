@@ -1,0 +1,48 @@
+---
+# file: roles/logstash/tasks/main.yml
+
+- name: install logstash ppa
+  apt_repository:
+    repo="deb http://packages.elasticsearch.org/logstash/1.5/debian stable main"
+    state=present
+  sudo: yes
+
+- name: install logstash
+  apt:
+    pkg=logstash
+    state=present
+    force=yes
+    update_cache=yes
+  sudo: yes
+
+# NOTE: some of the following conf files are static files, but are templated for future considerations
+# inputs
+- name: configure lumberjack input
+  template:
+    src=01-lumberjack-input.conf.j2
+    dest=/etc/logstash/conf.d/01-lumberjack-input.conf
+  sudo: yes
+
+# filters
+- name: configure syslog filter
+  template:
+    src=10-syslog.conf.j2
+    dest=/etc/logstash/conf.d/10-syslog.conf
+  sudo: yes
+
+# outputs
+- name: configure lumberjack output
+  template:
+    src=30-lumberjack-output.conf.j2
+    dest=/etc/logstash/conf.d/30-lumberjack-output.conf
+  sudo: yes
+# TODO: register the results of these so we can reload the service if any configs are changed
+
+- name: start logstash service, enable on boot
+  service:
+    name=logstash
+    state=started
+    enabled=yes
+  sudo: yes
+
+# vim:ft=ansible

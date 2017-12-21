@@ -1,0 +1,18 @@
+---
+# file: roles/java/tasks/main.yml
+
+- name: install java ppa
+  apt_repository:
+    repo="ppa:openjdk-r/ppa"
+    state=present
+  sudo: yes
+
+- name: install java
+  apt:
+    pkg=openjdk-8-jre
+    state=present
+    force=yes
+    update_cache=yes
+  sudo: yes
+
+# vim:ft=ansible

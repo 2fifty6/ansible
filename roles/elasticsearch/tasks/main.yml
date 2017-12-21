@@ -1,0 +1,62 @@
+---
+# file: roles/elasticsearch/tasks/main.yml
+
+- name: install elasticsearch ppa
+  apt_repository:
+    repo="deb http://packages.elasticsearch.org/elasticsearch/1.4/debian stable main"
+    state=present
+
+- name: install elasticsearch
+  apt:
+    pkg=elasticsearch
+    state=present
+    force=yes
+    update_cache=yes
+
+# until Ansible v2.0 comes out
+- name: install elasticsearch plugins
+  shell: ./bin/plugin --install {{ item.plugin }} --timeout 1m
+  args:
+    chdir: /usr/share/elasticsearch
+    creates: /usr/share/elasticsearch/plugins/{{ item.plugin_dir }}
+  with_items: elasticsearch_plugins
+
+# after Ansible v2.0 comes out
+#- name: install elasticsearch plugins
+#  elasticsearch_plugin:
+#    name={{ item }}
+#    state=present
+#  with_items: elasticsearch_plugins
+
+- name: set up elasticsearch config file
+  template:
+    src=elasticsearch.yml.j2
+    dest=/etc/elasticsearch/elasticsearch.yml
+  register: elasticsearch_config_file_result
+
+- name: restart elasticsearch service if config file was changed
+  service:
+    name=elasticsearch
+    state=restarted
+  when: elasticsearch_config_file_result|changed
+
+- name: start elasticsearch service, enable on boot
+  service:
+    name=elasticsearch
+    state=started
+    enabled=yes           # enabled on boot
+
+- name: wait for elasticsearch port to open
+  wait_for:
+    port={{ elasticsearch_port }}
+    state=started
+    timeout=60
+    # when checking a port, started will ensure the port is open
+
+- name: verify that we get a 200 status code
+  uri:
+    url=http://localhost:{{ elasticsearch_port }}
+    method=GET
+    status_code=200
+
+# vim:ft=ansible

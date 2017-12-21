@@ -1,0 +1,10 @@
+---
+# file: roles/elk/meta/main.yml
+
+dependencies:
+  - java
+  - elasticsearch
+  - logstash
+  - kibana
+
+# vim:ft=ansible

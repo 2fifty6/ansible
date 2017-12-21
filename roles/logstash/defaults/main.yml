@@ -1,0 +1,6 @@
+---
+# file: roles/logstash/defaults/main.yml
+
+logstash_version: 1.5
+
+# vim:ft=ansible

@@ -1,0 +1,16 @@
+---
+# file: roles/elasticsearch/defaults/main.yml
+
+elasticsearch_version: 1.7
+
+elasticsearch_plugins:
+  - { plugin: mobz/elasticsearch-head, plugin_dir: head }
+  - { plugin: lukas-vlcek/bigdesk, plugin_dir: bigdesk }
+  - { plugin: elasticsearch/elasticsearch-cloud-aws/2.4.1, plugin_dir: cloud-aws }
+
+elasticsearch_port: 9200
+
+elasticsearch_cluster_name: elastic_rean
+elasticsearch_aws_region: us-east-1
+
+# vim:ft=ansible

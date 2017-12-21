@@ -1,0 +1,8 @@
+---
+# file: playbooks/elk.yml
+
+- hosts: all
+  roles:
+    - elk
+
+# vim:ft=ansible:

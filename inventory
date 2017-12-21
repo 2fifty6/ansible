@@ -19,6 +19,7 @@
 ## Hosts ##
 ###########
 
+localhost ansible_connection=local
 # vagrant hosts
 vagrant_centos ansible_ssh_host=10.10.10.20
 vagrant_ubuntu ansible_ssh_host=10.10.10.30

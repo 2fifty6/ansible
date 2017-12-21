@@ -1,0 +1,8 @@
+cluster.name: {{ elasticsearch_cluster_name }}
+cloud.aws.access_key: {{ elasticsearch_aws_access_key }}
+cloud.aws.secret_key: {{ elasticsearch_aws_secret_key }}
+cloud.aws.region: {{ elasticsearch_aws_region | default("us-east-1") }}
+discovery.type: ec2
+discovery.ec2.tag.Name: "{{ elasticsearch_discovery_ec2_tag_name | default('Elasticsearch') }}"
+http.cors.enabled: true
+http.cors.allow-origin: "*"
