@@ -48,18 +48,22 @@ shdo () {
 if [[ -z "`echo $* | grep '\-\-no\-install'`" ]]; then
   # Determine package manager / if epel-release is necessary
   PKGCMD=""
+  SUDO=""
+  if [[ "$(whoami)" != "root" ]]; then
+    SUDO="sudo "
+  fi
   if [[ ! -z "`which yum`" ]]; then
     PKGCMD="yum"
-    shdo sudo $PKGCMD install -y epel-release
+    shdo $SUDO $PKGCMD install -y epel-release
     if [[ -z "`echo $* | grep '\-\-no\-update'`" ]]; then
-      shdo sudo $PKGCMD makecache
+      shdo $SUDO $PKGCMD makecache
     fi
   elif [[ ! -z "`which apt-get`" ]]; then
     PKGCMD="apt-get"
-    shdo sudo $PKGCMD install -y software-properties-common
-    shdo sudo add-apt-repository -y ppa:ansible/ansible
+    shdo $SUDO $PKGCMD install -y software-properties-common
+    shdo $SUDO add-apt-repository -y ppa:ansible/ansible
     if [[ -z "`echo $* | grep '\-\-no\-update'`" ]]; then
-      shdo sudo $PKGCMD update
+      shdo $SUDO $PKGCMD update
     fi
   elif [[ ! -z "`which brew`" ]]; then
     PKGCMD="brew"
@@ -70,19 +74,22 @@ if [[ -z "`echo $* | grep '\-\-no\-install'`" ]]; then
 
   # install deps
   if [[ $PKGCMD != "brew" ]]; then
-    PKGCMD="sudo $PKGCMD"
+    PKGCMD="$SUDO $PKGCMD"
   fi
   shdo $PKGCMD install -y ansible sshpass libssl-dev openssl python-pip # sshfs redis-server krb5-config libkrb5-dev
 
-  shdo sudo -H pip install --upgrade pip
-  shdo sudo -H pip install "http://github.com/diyan/pywinrm/archive/master.zip#egg=pywinrm"
-  #shdo sudo -H pip install redis
-  #shdo sudo -H pip install pykerberos
+  if [[ ! -z "$SUDO" ]]; then
+    SUDO="sudo -H "
+  fi
+  shdo $SUDO pip install --upgrade pip
+  shdo $SUDO pip install "http://github.com/diyan/pywinrm/archive/master.zip#egg=pywinrm"
+  #shdo $SUDO -H pip install redis
+  #shdo $SUDO -H pip install pykerberos
 fi
 
 # Uncomment to enable an ansible-vault password
-#shdo sudo touch ./.vault_passwd.txt
+#shdo $SUDO touch ./.vault_passwd.txt
 
 # REQUIRED for fact-caching with redis
 # TODO  ensure redis.conf does not have requirepass turned on
-#shdo sudo sed -i 's/^\([^#]+\)requirepass\(.*\)/#\1requirepass\2/' /etc/redis/redis.conf
+#shdo $SUDO sed -i 's/^\([^#]+\)requirepass\(.*\)/#\1requirepass\2/' /etc/redis/redis.conf
