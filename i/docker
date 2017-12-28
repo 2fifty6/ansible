@@ -1,9 +1,10 @@
 #!/bin/bash
-truncate hosts --size 0
-docker_ids=$(docker ps --format '{{.ID}}'| tr '\n' ' ')
+truncate hosts --size 0 2>/dev/null || echo > hosts
+docker_ids=$(docker ps --format '{{.ID}}' | tr '\n' ' ')
 for did in $docker_ids; do
   dname=$(docker container ls --filter=id=$did --format='{{.Names}}')
   dinfo=$(docker inspect $did)
-  dport=$(echo $dinfo | jq -r ".[].NetworkSettings.Ports.\"22/tcp\"[].HostPort")
+  dport=$(echo $dinfo | jq -r ".[].NetworkSettings.Ports.\"22/tcp\"[].HostPort" 2>/dev/null)
+  [[ $? -ne 0 || -z $dport ]] && dport=$(echo $dinfo | jq -r '.[].HostConfig.PortBindings | keys[0] | split("/")[0]')
   echo "$dname ansible_host=$did ansible_ssh_port=$dport ansible_connection=docker" >> hosts
 done
