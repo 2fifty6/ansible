@@ -1,70 +1,23 @@
 ---
 # file: roles/kibana/tasks/main.yml
+# TODO support darwin/windows
 
-- name: ensure presence of kibana user
-  user:
-    name={{ kibana_user }}
-    state=present
-  sudo: yes
+- include: install.yml
+  become: '"{{ ansible_user_id }}" != "root"'
+  tags:
+    - install
 
-- name: download kibana package
-  get_url:
-    url={{ kibana_pkg }}
-    dest=/tmp
+- include: config.yml
+  become: '"{{ ansible_user_id }}" != "root"'
 
-- name: extract kibana package contents
-  unarchive:
-    src=/tmp/{{ kibana_pkg | basename }}
-    dest=/tmp
-
-- name: move extracted kibana package to kibana home dir
-  shell: mv /tmp/{{ kibana_pkg | basename | replace(".tar.gz","") }} {{ kibana_home }}
-  sudo: yes
-  # NOTE: if kibana_home (e.g. /opt/kibana4) already exists, we'll end up with duplicate installs:
-  # 1. /opt/kibana4
-  # 2. /opt/kibana4/kibana-4.x.x-linux-etc
-  args:
-    creates: '{{ kibana_home }}'
-
-- name: install kibana4 init.d script
-  template:
-    src=kibana4.initd.j2
-    dest=/etc/init.d/kibana4
-    mode=0755
-  sudo: yes
-
-- name: install kibana4 as a service
-  template:
-    src=kibana4.service.j2
-    dest=/etc/systemd/system/kibana4.service
-  sudo: yes
-
-#- name: enable kibana4 pid file
-#  lineinfile:
-#    dest={{ kibana_home }}/config/kibana.yml
-#    regexp='#.*pid_file(.*)$'
-#    line='pid_file\1'
-#  sudo: yes
-#  register: kibana4_pid_file_result
-#
-#- name: restart kibana4 when pid config changes
+#- name: start kibana service, enable on boot
 #  service:
-#    name=kibana4
-#    state=restarted
-#  sudo: yes
-#  when: kibana4_pid_file_result|changed
-
-- name: start kibana4 service, enable on boot
-  service:
-    name=kibana4
-    state=started
-    enabled=yes       # enabled on boot
-  sudo: yes
-
-- name: wait for kibana port to open
-  wait_for:
-    port={{ kibana_port }}
-    state=started
-    timeout=60
+#    name=kibana{{ kibana_version_major }}
+#    state=started
+#    enabled=yes       # enabled on boot
+#  become: '"{{ ansible_user_id }}" != "root"'
+#
+#- name: wait for kibana port to open
+#  wait_for: port={{ service.port }} state=started timeout=60
 
 # vim:ft=ansible

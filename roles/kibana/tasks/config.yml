@@ -1,0 +1,41 @@
+---
+# file: roles/kibana/tasks/config.yml
+
+- name: ensure kibana config.yml
+  template:
+    src=kibana{{ kibana_version_major }}.yml.j2
+    dest={{ kibana_home }}/config/kibana.yml
+    owner={{ kibana_user }}
+
+#- name: install kibana init.d script
+#  template:
+#    src=kibana{{ kibana_version_major }}.initd.j2
+#    dest=/etc/init.d/kibana{{ kibana_version_major }}
+#    mode=0755
+#  become: '"{{ ansible_user_id }}" != "root"'
+#  ignore_errors: yes
+#
+#- name: install kibana as a service
+#  template:
+#    src=kibana{{ kibana_version_major }}.service.j2
+#    dest=/etc/systemd/system/kibana{{ kibana_version_major }}.service
+#  become: '"{{ ansible_user_id }}" != "root"'
+#  ignore_errors: yes
+#
+#- name: enable kibana pid file
+#  lineinfile:
+#    dest={{ kibana_home }}/config/kibana.yml
+#    regexp='#.*pid_file(.*)$'
+#    line='pid_file\1'
+#  become: '"{{ ansible_user_id }}" != "root"'
+#  register: kibana_pid_file_result
+#
+#- name: restart kibana when pid config changes
+#  service:
+#    name=kibana{{ kibana_version_major }}
+#    state=restarted
+#  become: '"{{ ansible_user_id }}" != "root"'
+#  when: kibana_pid_file_result|changed
+#
+
+# vim:ft=ansible

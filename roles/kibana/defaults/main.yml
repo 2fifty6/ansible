@@ -1,9 +1,49 @@
 ---
 # file: roles/kibana/defaults/main.yml
 
-kibana_port: 5601
-kibana_home: /opt/kibana4
-kibana_user: www-data
-kibana_pkg: 'https://download.elastic.co/kibana/kibana/kibana-4.1.2-linux-x64.tar.gz'
+# config/kibana.yml
+server:
+  port: 5601
+  host: localhost
+  basePath:
+  maxPayloadBytes: 1048576
+  name:
+  ssl:
+    enabled: "false"
+    certificate:
+    key:
+
+kibana:
+  index:
+  defaultAppId:
+
+elasticsearch:
+  url:
+  preserveHost: "true"
+  username:
+  password:
+  ssl:
+    certificate:
+    key:
+    certificateAuthorities:
+    verificationMode:
+  pingTimeout:
+  requestTimeout:
+  requestHeadersWhitelist:
+  customHeaders:
+  shardTimeout:
+  startupTimeout:
+
+pid:
+  file: /var/run/kibana.pid
+logging:
+  dest: stdout
+  silent: "false"
+  quiet: "false"
+  verbose: "false"
+ops:
+  interval: 5000
+i18n:
+  defaultLocale: en
 
 # vim:ft=ansible

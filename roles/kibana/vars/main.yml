@@ -1,0 +1,11 @@
+---
+# file: roles/kibana/vars/main.yml
+
+kibana_version_major: 6
+kibana_version_minor: 1.1
+kibana_home: /opt/kibana{{ kibana_version_major }}
+kibana_user: www-data
+kibana_pkg: kibana-{{ kibana_version_major }}.{{ kibana_version_minor }}-linux-{{ ansible_architecture }}.tar.gz
+kibana_pkg_url: https://artifacts.elastic.co/downloads/kibana/{{ kibana_pkg }}
+
+# vim:ft=ansible
